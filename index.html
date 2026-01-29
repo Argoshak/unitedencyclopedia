@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الموسوعة المتحدة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7fa;
+            color: #333;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: #1a1a2e;
+            color: #e4e4e4;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4c67f4, #243ba0);
+            color: #fff;
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 100% 75%, 0 60%);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        header p {
+            font-size: 1.5rem;
+            margin-top: 15px;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 800px;
+            margin: -50px auto 30px;
+            padding: 25px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        body.dark-mode .search-container {
+            background: #232528;
+        }
+
+        .search-container input {
+            width: 85%;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #4c67f4;
+            border-radius: 25px;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        .search-container input:focus {
+            border-color: #243ba0;
+            box-shadow: 0 0 10px rgba(76, 103, 244, 0.5);
+        }
+
+        .search-container button {
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            color: #fff;
+            background: linear-gradient(135deg, #243ba0, #4c67f4);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .suggestions {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            position: absolute;
+            width: 85%;
+            left: 7.5%;
+            z-index: 10;
+        }
+
+        body.dark-mode .suggestions {
+            background: #232528;
+            border-color: #4c67f4;
+        }
+
+        .suggestions li {
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .suggestions li:hover {
+            background: #f4f7fa;
+        }
+
+        .result {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 800px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .result {
+            background: #232528;
+        }
+
+        .result img {
+            max-width: 100%;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .result h3 {
+            font-size: 1.8rem;
+            color: #243ba0;
+        }
+
+        .result p {
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .result .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .result .btn-shortcut,
+        .result .btn-read-more,
+        .result .btn-clear {
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            color: #fff;
+            background: linear-gradient(135deg, #4c67f4, #243ba0);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background: #243ba0;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .about-section {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 70%;
+            height: 100%;
+            background: #f7f9fc;
+            text-align: center;
+            padding: 50px 20px;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+            z-index: 20;
+            transition: right 0.3s ease;
+        }
+
+        .about-section.open {
+            right: 0;
+        }
+
+        body.dark-mode .about-section {
+            background: #232528;
+            color: #e4e4e4;
+        }
+
+        .about-section h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .about-section p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        .about-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #4c67f4;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 30;
+        }
+
+        .about-toggle:hover {
+            background: #243ba0;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4c67f4;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 30;
+        }
+
+        .dark-mode-toggle:hover {
+            background: #243ba0;
+        }
+
+        .btn-back-circle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background: #ff6f61;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .btn-back-circle:hover {
+            background: #ff4e43;
+        }
+        
+       .loading-spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #ccc;
+            border-top: 5px solid #4c67f4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>الموسوعة المتحدة</h1>
+        <p>.</p>
+    </header>
+
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌓</button>
+    <button class="about-toggle" onclick="toggleAbout()">🧑‍💻</button>
+
+    <main>
+        <div class="search-container">
+            <input id="searchInput" type="text" placeholder="ابحث عن موضوع..." oninput="showSuggestions()">
+            <ul id="suggestions" class="suggestions"></ul>
+            <button onclick="searchTopic()">ابحث الآن</button>
+        </div>
+        <div id="resultContainer" class="result"></div>
+    </main>
+
+    <section id="aboutSection" class="about-section">
+        <button class="btn-back-circle" onclick="closeAbout()">←</button>
+        <h2>Developers</h2>
+        <p>.      • Developer Zakaria Akhraz He is the one who developed this encyclopedia.</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 جميع الحقوق محفوظة للموسوعة المتحدة</p>
+    <p><a href="https://www.mediafire.com/file/5pnwhd6mdxlogen/Unitedencyclopedia.apk/file" style="color: #fff; text-decoration: underline;">لتحميل تطبيقنا المرجو الضغط هنا</a></p>
+</footer>
+
+    <script>
+        let lastSearchResult = null;
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        function toggleAbout() {
+            const aboutSection = document.getElementById('aboutSection');
+            aboutSection.classList.toggle('open');
+            
+        }
+
+        function closeAbout() {
+            const aboutSection = document.getElementById('aboutSection');
+            aboutSection.classList.remove('open');
+            
+        }
+
+        async function showSuggestions() {
+            const query = document.getElementById('searchInput').value.trim();
+            const suggestions = document.getElementById('suggestions');
+            if (!query) {
+                suggestions.innerHTML = '';
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://ar.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=5&format=json&origin=*`);
+                const data = await res.json();
+                const titles = data[1];
+                suggestions.innerHTML = titles.map(title => `<li onclick="selectSuggestion('${title}')">${title}</li>`).join('');
+            } catch (error) {
+                suggestions.innerHTML = '<li>تعذر تحميل الاقتراحات</li>';
+            }
+        }
+
+        function selectSuggestion(suggestion) {
+            document.getElementById('searchInput').value = suggestion;
+            document.getElementById('suggestions').innerHTML = '';
+        }
+
+        async function searchTopic() {
+            const query = document.getElementById('searchInput').value.trim();
+            const result = document.getElementById('resultContainer');
+            if (!query) {
+                result.innerHTML = '<p>يرجى إدخال كلمة بحث.</p>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://ar.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&piprop=original&redirects=resolve&titles=${encodeURIComponent(query)}&format=json&origin=*`);
+                const data = await res.json();
+                const page = Object.values(data.query.pages)[0];
+                if (page.missing) {
+                    result.innerHTML = `<p>لا توجد نتائج لموضوع "${query}".</p>`;
+                } else {
+                    lastSearchResult = { query, page };
+
+                    const image = page.original ? `<img src="${page.original.source}" alt="${page.title}" style="max-width:100%; border-radius:10px; margin-bottom:15px;">` : '';
+                    const wikiLink = `https://ar.m.wikipedia.org/?curid=${page.pageid}`;
+                    const content = page.extract ? `<p>${page.extract}</p>` : '<p>لا يوجد محتوى لعرضه.</p>';
+
+                    result.innerHTML = `
+                        ${image}
+                        <h3 style="color:#243ba0;">${page.title}</h3>
+                        ${content}
+                        <div class="btn-container">
+                            <button class="btn-clear" onclick="resetSearch()">مسح النص</button>
+                            <button class="btn-shortcut" onclick="summarizeArticle()">تلخيص النص</button>
+                            <a href="${wikiLink}" class="btn-read-more" target="_blank">المقالة الأصلية</a>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = '<p>حدث خطأ أثناء البحث، حاول لاحقًا.</p>';
+            }
+        }
+
+        function summarizeArticle() {
+            const result = document.getElementById('resultContainer');
+            if (!lastSearchResult || !lastSearchResult.page.extract) {
+                result.innerHTML = '<p>لا يوجد نص لتلخيصه.</p>';
+                return;
+            }
+
+            const text = lastSearchResult.page.extract;
+            const sentences = text.split(/[.؟!\n]+/).slice(0, 3).join('. ') + '.';
+            result.innerHTML = `
+                <h3 style="color:#243ba0;">${lastSearchResult.page.title} (ملخص)</h3>
+                <p>${sentences}</p>
+                <div class="btn-container">
+                    <button class="btn-clear" onclick="resetSearch()">مسح النص</button>
+                    <button class="btn-read-more" onclick="restoreOriginal()">رجوع</button>
+                    <a href="https://ar.m.wikipedia.org/?curid=${lastSearchResult.page.pageid}" class="btn-read-more" target="_blank">المقالة الأصلية</a>
+                </div>
+            `;
+        }
+
+        function restoreOriginal() {
+            if (!lastSearchResult || !lastSearchResult.page) return;
+            const result = document.getElementById('resultContainer');
+            const page = lastSearchResult.page;
+
+            const image = page.original ? `<img src="${page.original.source}" alt="${page.title}" style="max-width:100%; border-radius:10px; margin-bottom:15px;">` : '';
+            const wikiLink = `https://ar.m.wikipedia.org/?curid=${page.pageid}`;
+            const content = page.extract ? `<p>${page.extract}</p>` : '<p>لا يوجد محتوى لعرضه.</p>';
+
+            result.innerHTML = `
+                ${image}
+                <h3 style="color:#243ba0;">${page.title}</h3>
+                ${content}
+                <div class="btn-container">
+                    <button class="btn-clear" onclick="resetSearch()">مسح النص</button>
+                    <button class="btn-shortcut" onclick="summarizeArticle()">تلخيص النص</button>
+                    <a href="${wikiLink}" class="btn-read-more" target="_blank">المقالة الأصلية</a>
+                </div>
+            `;
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('resultContainer').innerHTML = '';
+            document.getElementById('suggestions').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
